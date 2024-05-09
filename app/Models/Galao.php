@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Galao extends Model
 {
     use HasFactory;
+    
+    protected $fillable = ['volume'];
 }
