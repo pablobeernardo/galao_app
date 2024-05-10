@@ -33,24 +33,18 @@ class EncherGalaoService
         $resultado = [];
         $volumeGalao = $galao->volume;
 
-        // Ordena as garrafas pelo volume de forma decrescente
         usort($garrafas, function ($a, $b) {
             return $b['volume'] <=> $a['volume'];
         });
 
-        // Percorre as garrafas para encher com água do galão
         foreach ($garrafas as $garrafa) {
             $volumeGarrafa = $garrafa['volume'];
 
-            // Se o volume da garrafa for menor ou igual ao volume restante do galão
             if ($volumeGarrafa <= $volumeGalao) {
-                // Adiciona o volume da garrafa ao resultado
                 $resultado[] = $volumeGarrafa;
-                // Reduz o volume do galão pelo volume da garrafa
                 $volumeGalao -= $volumeGarrafa;
             }
 
-            // Se o galão estiver vazio, interrompe o loop
             if ($volumeGalao == 0) {
                 break;
             }

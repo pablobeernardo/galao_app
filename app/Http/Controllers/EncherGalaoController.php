@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Galao;
-use App\Models\Garrafa;
-use App\Services\EncherGalaoService;
 
 class EncherGalaoController extends Controller
 {
@@ -16,27 +13,34 @@ class EncherGalaoController extends Controller
 
     public function store(Request $request)
     {
-        // Validar entrada de dados
-        $request->validate([
-            'volume_galao' => 'required|numeric|min:0',
-            'quantidade_garrafas' => 'required|integer|min:1',
-            'garrafas' => 'required|array|min:' . $request->input('quantidade_garrafas'),
-            'garrafas.*' => 'required|numeric|min:0',
-        ]);
-
         $volumeGalao = $request->input('volume_galao');
         $quantidadeGarrafas = $request->input('quantidade_garrafas');
-        $capacidadesGarrafas = $request->input('garrafas');
+        $garrafas = $request->input('garrafas');
 
-        // Encher o galão
-        $encherGalaoService = new EncherGalaoService();
-        $resultado = $encherGalaoService->encherGalao($volumeGalao, $quantidadeGarrafas, $capacidadesGarrafas);
+        // Ordenar as garrafas em ordem decrescente
+        rsort($garrafas);
 
-        return redirect()->route('encher_galao.index')->with('resultado', [
-            'garrafas' => $resultado,
-            'sobra' => $volumeGalao - array_sum($resultado)
+        // Inicializa a sobra como o volume do galão
+        $sobra = $volumeGalao;
+
+        // Inicializa o array de garrafas utilizadas
+        $garrafasUtilizadas = [];
+
+        // Enche as garrafas até que o galão esteja vazio ou não haja mais garrafas
+        foreach ($garrafas as $garrafa) {
+            if ($sobra >= $garrafa) {
+                $sobra -= $garrafa;
+                $garrafasUtilizadas[] = $garrafa;
+            }
+        }
+
+        return view('encher_galao', [
+            'resultado' => [
+                'garrafas' => $garrafasUtilizadas,
+                'sobra' => $sobra
+            ]
         ]);
     }
-
+    
 
 }
