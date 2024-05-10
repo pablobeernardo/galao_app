@@ -19,16 +19,12 @@ class EncherGalaoController extends Controller
         $quantidadeGarrafas = $request->input('quantidade_garrafas');
         $garrafas = $request->input('garrafas');
 
-        // Ordenar as garrafas em ordem decrescente
         rsort($garrafas);
 
-        // Inicializa a sobra como o volume do galão
         $sobra = $volumeGalao;
 
-        // Inicializa o array de garrafas utilizadas
         $garrafasUtilizadas = [];
 
-        // Enche as garrafas até que o galão esteja vazio ou não haja mais garrafas
         foreach ($garrafas as $garrafa) {
             if ($sobra >= $garrafa) {
                 $sobra -= $garrafa;
@@ -46,12 +42,27 @@ class EncherGalaoController extends Controller
         return redirect()->route('encher_galao.registros');
     }
 
-
-
     public function registros()
     {
         $registros = Registro::with('galao.garrafas')->get();
         return view('registros', compact('registros'));
+    }
+
+    public function exportarCSV(Request $request)
+    {
+        $registro = Registro::where('galao_id', $request->galao_id)->latest()->first();
+
+        return response()->streamDownload(function () use ($registro) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, ['Data e Hora', 'Volume do Galão (L)', 'Garrafas Utilizadas (L)', 'Sobra (L)']);
+            fputcsv($file, [
+                $registro->created_at->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s'),
+                $registro->volume,
+                implode(', ', json_decode($registro->garrafas_utilizadas)),
+                $registro->sobra
+            ]);
+            fclose($file);
+        }, 'encher_galao_resultado.csv');
     }
 
 
