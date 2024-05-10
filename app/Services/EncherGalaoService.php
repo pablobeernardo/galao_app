@@ -67,5 +67,6 @@ class EncherGalaoService
         fputcsv($file, ['Sobra', $galao->volume - array_sum($resultado)]);
         fclose($file);
     }
+
     
 }

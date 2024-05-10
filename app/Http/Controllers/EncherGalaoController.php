@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Registro;
+use App\Models\Galao;
 
 class EncherGalaoController extends Controller
 {
@@ -34,13 +36,23 @@ class EncherGalaoController extends Controller
             }
         }
 
-        return view('encher_galao', [
-            'resultado' => [
-                'garrafas' => $garrafasUtilizadas,
-                'sobra' => $sobra
-            ]
-        ]);
+        $registro = new Registro();
+        $registro->volume = $volumeGalao;
+        $registro->garrafas_utilizadas = json_encode($garrafasUtilizadas);
+        $registro->sobra = $sobra;
+        $registro->galao_id = Galao::create(['volume' => $volumeGalao])->id;
+        $registro->save();
+
+        return redirect()->route('encher_galao.registros');
     }
-    
+
+
+
+    public function registros()
+    {
+        $registros = Registro::with('galao.garrafas')->get();
+        return view('registros', compact('registros'));
+    }
+
 
 }

@@ -76,8 +76,8 @@
                 <tr>
                     <td>{{ $registro->created_at->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }}</td>
                     <td>{{ $registro->volume }}L</td>
-                    <td>[{{ implode('L, ', $registro->garrafas->pluck('volume')->toArray()) }}L]</td>
-                    <td>{{ $registro->volume - $registro->garrafas->sum('volume') }}L</td>
+                    <td>[{{ implode('L, ', json_decode($registro->garrafas_utilizadas)) }}L]</td>
+                    <td>{{ $registro->sobra }}L</td>
                     <td>
                         <form action="{{ route('exportar_csv') }}" method="post">
                             @csrf
