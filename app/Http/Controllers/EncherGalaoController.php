@@ -25,22 +25,18 @@ class EncherGalaoController extends Controller
         ]);
 
         $volumeGalao = $request->input('volume_galao');
-        $garrafas = $request->input('garrafas');
-
-        // Criar o galão e as garrafas
-        $galao = Galao::create(['volume' => $volumeGalao]);
-        foreach ($garrafas as $volumeGarrafa) {
-            Garrafa::create(['volume' => $volumeGarrafa]);
-        }
+        $quantidadeGarrafas = $request->input('quantidade_garrafas');
+        $capacidadesGarrafas = $request->input('garrafas');
 
         // Encher o galão
         $encherGalaoService = new EncherGalaoService();
-        $resultado = $encherGalaoService->encherGalao($galao, Garrafa::all());
+        $resultado = $encherGalaoService->encherGalao($volumeGalao, $quantidadeGarrafas, $capacidadesGarrafas);
 
         return redirect()->route('encher_galao.index')->with('resultado', [
-            'galao' => $galao,
             'garrafas' => $resultado,
-            'sobra' => $galao->volume - array_sum($resultado)
+            'sobra' => $volumeGalao - array_sum($resultado)
         ]);
     }
+
+
 }

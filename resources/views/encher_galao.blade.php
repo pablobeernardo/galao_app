@@ -9,7 +9,8 @@
     <h1>Encher Galão</h1>
     @if (session('resultado'))
         <h2>Resultado:</h2>
-        <p>[{{ implode('L, ', session('resultado')['garrafas']) }}L], sobra {{ session('resultado')['sobra'] }}L</p>
+        <p>Garrafas utilizadas: [{{ implode('L, ', session('resultado')['garrafas']) }}L]</p>
+        <p>Sobra: {{ session('resultado')['sobra'] }}L</p>
     @endif
     <form action="{{ route('encher_galao.store') }}" method="post">
         @csrf
