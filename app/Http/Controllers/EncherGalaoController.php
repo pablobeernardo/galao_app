@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Registro;
 use App\Models\Galao;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\RegistrosEnviadosMail; 
+use App\Mail\RegistrosEnviados;
+use Illuminate\Support\Facades\Log;
 
 class EncherGalaoController extends Controller
 {
@@ -65,5 +69,53 @@ class EncherGalaoController extends Controller
         }, 'encher_galao_resultado.csv');
     }
 
+    public function enviarEmail(Request $request)
+    {
+        $galao_id = $request->galao_id;
+        $registros_selecionados = $request->registros_selecionados;
 
+        if (!$registros_selecionados) {
+            return redirect()->back()->with('error', 'Por favor, selecione pelo menos um registro para enviar por e-mail.');
+        }
+
+        $registros = Registro::whereIn('id', $registros_selecionados)->get();
+        $galao = Galao::findOrFail($galao_id);
+
+        try {
+            $anexos = [];
+
+            foreach ($registros as $registro) {
+                $csvData = $this->gerarDadosCSV($registro);
+                $anexos[] = [
+                    'data' => $csvData['content'],
+                    'filename' => $csvData['fileName']
+                ];
+            }
+
+            Mail::to($request->email)->send(new RegistrosEnviados($registros, $galao, $anexos));
+            
+            Log::info('E-mail enviado com sucesso para: ' . $request->email);
+            return redirect()->back()->with('success', 'E-mail enviado com sucesso!');
+        } catch (\Exception $e) {
+            Log::error('Erro ao enviar o e-mail: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Erro ao enviar o e-mail. Por favor, tente novamente mais tarde.');
+        }
+    }
+
+    private function gerarDadosCSV($registro)
+    {
+        ob_start();
+        $file = fopen('php://output', 'w');
+        fputcsv($file, ['Data e Hora', 'Volume do Galão (L)', 'Garrafas Utilizadas (L)', 'Sobra (L)']);
+        fputcsv($file, [
+            $registro->created_at->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s'),
+            $registro->volume,
+            implode(', ', json_decode($registro->garrafas_utilizadas)),
+            $registro->sobra
+        ]);
+        fclose($file);
+        $content = ob_get_clean();
+        $fileName = 'encher_galao_resultado.csv';
+        return compact('content', 'fileName');
+    }
 }
