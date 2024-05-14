@@ -37,19 +37,22 @@
             background-color: #007bff;
             color: #fff;
         }
-        .button {
-            display: block;
-            width: 100%;
+        .display-clear{
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            flex-direction: row;
+        }
+        button {
             padding: 10px;
+            margin-top: 10px;
             background-color: #007bff;
             color: #fff;
             border: none;
             border-radius: 5px;
-            text-decoration: none;
-            text-align: center;
             cursor: pointer;
         }
-        .button:hover {
+        button:hover {
             background-color: #0056b3;
         }
         form {
@@ -113,24 +116,22 @@
             {{ session('error') }}
         </div>
         @endif
-        <form action="{{ route('enviar_email') }}" method="post" id="emailForm">
+        <form action="{{ route('limpar_registros') }}" method="get">
             @csrf
-            <input type="hidden" name="galao_id" value="{{ $registros->first()->galao_id }}">
             <table>
                 <thead>
                     <tr>
-                        <th><input type="checkbox" id="select-all" onclick="toggleCheckboxes(this)"></th>
                         <th>Data e Hora</th>
                         <th>Volume do Galão (L)</th>
                         <th>Garrafas Utilizadas</th>
                         <th>Sobra (L)</th>
                         <th>Exportar CSV</th>
+                        <th>Excluir Registro</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($registros as $registro)
                     <tr>
-                        <td><input type="checkbox" name="registros_selecionados[]" value="{{ $registro->id }}"></td>
                         <td>{{ $registro->created_at->timezone('America/Sao_Paulo')->format('d/m/Y H:i:s') }}</td>
                         <td>{{ $registro->volume }}L</td>
                         <td>[{{ implode('L, ', json_decode($registro->garrafas_utilizadas)) }}L]</td>
@@ -138,32 +139,20 @@
                         <td>
                             <button type="button" class="button" onclick="exportarCSV({{ $registro->id }})">Exportar</button>
                         </td>
+                        <td>
+                            <button type="button" class="button" onclick="limparRegistro({{ $registro->id }})">Excluir</button>
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
-            <div class="display-email">
-                <input type="email" id="email" name="email" placeholder="Digite o e-mail" required>
-                <button type="button" class="button submit-button" onclick="enviarEmail()">Enviar</button>
+            <div class="display-clear">
+                <button type="submit" class="button">Excluir Todos os Registros</button>
+                <a href="{{ route('encher_galao.index') }}">Voltar</a>
             </div>
         </form>
-        <a href="{{ route('encher_galao.index') }}">Voltar</a>
     </div>
     <script>
-        function enviarEmail() {
-            var checkboxes = document.querySelectorAll('input[type=checkbox][name="registros_selecionados[]"]:checked');
-            if (checkboxes.length === 0) {
-                alert('Selecione pelo menos um registro para enviar por e-mail.');
-                return false;
-            }
-            if (document.getElementById('email').value === '') {
-                alert('Digite o e-mail para enviar os registros.');
-                return false;
-            }
-            var emailForm = document.getElementById('emailForm');
-            emailForm.submit();
-        }
-
         function exportarCSV(id) {
             var form = document.createElement("form");
             form.setAttribute("method", "post");
@@ -185,11 +174,10 @@
             form.submit();
         }
 
-        function toggleCheckboxes(checkbox) {
-            var checkboxes = document.querySelectorAll('input[type=checkbox][name="registros_selecionados[]"]');
-            checkboxes.forEach(function(item) {
-                item.checked = checkbox.checked;
-            });
+        function limparRegistro(id) {
+            if (confirm('Tem certeza de que deseja limpar este registro?')) {
+                window.location.href = "{{ url('/limpar-registro/') }}" + '/' + id;
+            }
         }
     </script>
 </body>
