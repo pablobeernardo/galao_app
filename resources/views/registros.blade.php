@@ -146,10 +146,7 @@
                     @endforeach
                 </tbody>
             </table>
-            <div class="display-clear">
-                <button type="submit" class="button">Excluir Todos os Registros</button>
                 <a href="{{ route('encher_galao.index') }}">Voltar</a>
-            </div>
         </form>
     </div>
     <script>

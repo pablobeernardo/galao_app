@@ -77,13 +77,5 @@ class EncherGalaoController extends Controller
         Registro::find($id)->delete();
         return redirect()->route('encher_galao.registros')->with('success', 'Registro excluído com sucesso!');
     }
-
-    public function limparRegistros()
-    {
-        Registro::truncate();
-        Galao::truncate();
-        return redirect()->route('encher_galao.registros')->with('success', 'Registros limpos com sucesso!');
-    }
-
    
 }
