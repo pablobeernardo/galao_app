@@ -17,6 +17,7 @@ Antes de iniciar, certifique-se de que seu ambiente atenda aos seguintes requisi
     <li>Instale as dependências do projeto utilizando o Composer: composer install</li>
     <li>Execute o servidor PHP integrado do Laravel: php artisan serve</li>
     <li>Acesse o servidor Apache através do XAMPP para utilizar a aplicação.</li>
+    <li>Acesse a URL http://localhost/galao_app/public/</li>
 </ul>
 <h2>Funcionalidades</h2>
 O projeto consiste em duas telas principais:
