@@ -12,10 +12,11 @@ Antes de iniciar, certifique-se de que seu ambiente atenda aos seguintes requisi
 <h2>Como executar o projeto</h2>
 
 <ul>
-    <li>Clone o repositório do GitHub: git clone https://github.com/pablobeernardo/galao_app.git</li>
+    <li>Instale o PHP e o XAMPP</li>
+    <li>Clone o repositório do GitHub dentro da pasta HTDODCS do XAMPP: git clone https://github.com/pablobeernardo/galao_app.git</li>
     <li>Acesse a pasta do projeto</li>
     <li>Instale as dependências do projeto utilizando o Composer: composer install</li>
-    <li>Execute o servidor PHP integrado do Laravel: php artisan serve</li>
+    <li>Execute o XAMPP</li>
     <li>Acesse o servidor Apache através do XAMPP para utilizar a aplicação.</li>
     <li>Acesse a URL http://localhost/galao_app/public/</li>
 </ul>
