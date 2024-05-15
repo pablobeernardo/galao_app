@@ -4,7 +4,7 @@ Este é um teste técnico desenvolvido utilizando o framework Laravel. Ele consi
 <h3>Pré-requisitos</h3>
 Antes de iniciar, certifique-se de que seu ambiente atenda aos seguintes requisitos:
 <ul>
-    <li>PHP instalado na sua máquina</li>
+    <li>PHP 8.2 instalado na sua máquina</li>
     <li>Composer instalado na sua máquina</li>
     <li>XAMPP instalado na sua máquina</li>
 </ul>    
